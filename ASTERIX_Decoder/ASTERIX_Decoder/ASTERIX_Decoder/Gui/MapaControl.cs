@@ -59,10 +59,10 @@ namespace ASTERIX_Decoder_p1.Gui
             Dock = DockStyle.Fill;
             BackColor = Tema.Fondo;
 
-            // Los servidores de OpenStreetMap bloquean (403 "Access blocked") las
-            // peticiones de aplicaciones de escritorio como GMap.NET, incluso con
-            // un User-Agent propio. Se usa un proveedor alternativo (CARTO, basado
-            // en OSM) que permite este uso y combina con el tema oscuro.
+            // OpenStreetMap bloquea (403) a las apps de escritorio y CARTO pasó a
+            // exigir API key, asi que se usa un proveedor propio con teselas de Esri
+            // (ver ProveedorMapaOscuro), gratuitas y sin clave. Se mantiene un
+            // User-Agent identificable por buenas practicas.
             GMapProvider.UserAgent = "ASTERIX-Decoder-PGTA/1.0 (proyecto academico)";
 
             GMaps.Instance.Mode = AccessMode.ServerAndCache;
@@ -73,7 +73,7 @@ namespace ASTERIX_Decoder_p1.Gui
                 MapProvider = ProveedorMapaOscuro.Instance,
                 Position = CentroBarcelona,
                 MinZoom = 2,
-                MaxZoom = 18,
+                MaxZoom = 16,   // Esri sirve teselas reales hasta el zoom 16
                 Zoom = ZoomInicial,
                 DragButton = MouseButtons.Left,
                 CanDragMap = true,

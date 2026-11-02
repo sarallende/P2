@@ -7,23 +7,27 @@ using GMap.NET.Projections;
 namespace ASTERIX_Decoder_p1.Gui
 {
     /// <summary>
-    /// Proveedor de mapa propio basado en las teselas oscuras de CARTO (que a su
-    /// vez usan datos de OpenStreetMap).
+    /// Proveedor de mapa propio que usa las teselas oscuras de Esri
+    /// ("World Dark Gray Base"), gratuitas y SIN API key.
     ///
-    /// Se usa porque los servidores de teselas de OpenStreetMap bloquean (403
-    /// "Access blocked") las peticiones de aplicaciones de escritorio como las de
-    /// GMap.NET, incluso fijando un User-Agent propio. CARTO permite este uso y,
-    /// ademas, el estilo oscuro combina con el tema de la aplicacion.
+    /// Motivo: los servidores de OpenStreetMap bloquean (403 "Access blocked") las
+    /// peticiones de aplicaciones como GMap.NET, y CARTO pasó a exigir una clave
+    /// de pago ("API KEY REQUIRED"). Esri permite este uso sin clave y su estilo
+    /// oscuro combina con el tema de la aplicacion.
+    ///
+    /// Nota: las teselas reales de Esri llegan hasta el zoom 16 (por eso el mapa
+    /// limita el zoom maximo a 16).
     /// </summary>
     internal sealed class ProveedorMapaOscuro : GMapProvider
     {
         public static readonly ProveedorMapaOscuro Instance = new ProveedorMapaOscuro();
 
-        private readonly Guid _id = new Guid("9E0F2B7A-3C41-4D58-8E6B-2A1C9D7F4B30");
+        // Guid nuevo: evita reutilizar teselas antiguas guardadas en cache.
+        private readonly Guid _id = new Guid("4C8D1E6F-2A3B-4C5D-9E0F-1122334455AA");
         private GMapProvider[] _overlays;
 
         public override Guid Id => _id;
-        public override string Name => "CARTO Oscuro (OSM)";
+        public override string Name => "Esri Oscuro";
         public override PureProjection Projection => MercatorProjection.Instance;
 
         public override GMapProvider[] Overlays =>
@@ -37,9 +41,10 @@ namespace ASTERIX_Decoder_p1.Gui
 
         private string ConstruirUrl(GPoint pos, int zoom)
         {
-            // Rotacion entre subdominios a/b/c/d para repartir la carga.
-            char servidor = "abcd"[GetServerNum(pos, 4)];
-            return $"https://{servidor}.basemaps.cartocdn.com/dark_all/{zoom}/{pos.X}/{pos.Y}.png";
+            // Esri "World Dark Gray Base". El orden de la URL es zoom / fila(Y) / columna(X).
+            return "https://server.arcgisonline.com/ArcGIS/rest/services/" +
+                   "Canvas/World_Dark_Gray_Base/MapServer/tile/" +
+                   $"{zoom}/{pos.Y}/{pos.X}";
         }
     }
 }
