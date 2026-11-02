@@ -49,8 +49,13 @@ namespace ASTERIX_Decoder_p1.Gui
             b.Font = FuenteFuerte;
             b.Cursor = Cursors.Hand;
             b.UseVisualStyleBackColor = false;
-            b.AutoSize = false;
-            b.Padding = new Padding(10, 0, 10, 0);
+
+            // Los botones se ajustan a su texto (evita recortes como "Sto" o
+            // "Configura" al escalar la pantalla en pantallas con DPI alto).
+            b.AutoSize = true;
+            b.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            b.MinimumSize = new Size(0, 34);
+            b.Padding = new Padding(14, 7, 14, 7);
 
             Color normal = b.BackColor;
             Color hover = acento ? AcentoCian : Elevado;
