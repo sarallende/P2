@@ -59,9 +59,10 @@ namespace ASTERIX_Decoder_p1.Gui
             Dock = DockStyle.Fill;
             BackColor = Tema.Fondo;
 
-            // OpenStreetMap exige un User-Agent propio e identificable. El valor
-            // por defecto de GMap.NET esta bloqueado por su politica de uso y
-            // devuelve "403 Access blocked". Con un User-Agent propio se resuelve.
+            // Los servidores de OpenStreetMap bloquean (403 "Access blocked") las
+            // peticiones de aplicaciones de escritorio como GMap.NET, incluso con
+            // un User-Agent propio. Se usa un proveedor alternativo (CARTO, basado
+            // en OSM) que permite este uso y combina con el tema oscuro.
             GMapProvider.UserAgent = "ASTERIX-Decoder-PGTA/1.0 (proyecto academico)";
 
             GMaps.Instance.Mode = AccessMode.ServerAndCache;
@@ -69,7 +70,7 @@ namespace ASTERIX_Decoder_p1.Gui
             _mapa = new GMapControl
             {
                 Dock = DockStyle.Fill,
-                MapProvider = GMapProviders.OpenStreetMap,
+                MapProvider = ProveedorMapaOscuro.Instance,
                 Position = CentroBarcelona,
                 MinZoom = 2,
                 MaxZoom = 18,
