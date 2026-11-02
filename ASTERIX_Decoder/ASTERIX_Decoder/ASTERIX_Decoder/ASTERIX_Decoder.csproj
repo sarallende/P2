@@ -1,10 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    ============================================================================
+    Proyecto adaptado de aplicacion de consola a Windows Forms.
+
+    Unico archivo existente modificado (imprescindible para una app de ventanas):
+      - net6.0 -> net6.0-windows   (requerido por Windows Forms)
+      - OutputType Exe -> WinExe    (evita abrir la ventana de consola)
+      - UseWindowsForms = true      (activa el soporte WinForms)
+      - StartupObject               (arranca por la nueva interfaz grafica, de
+                                     modo que Program.cs queda INTACTO y sin uso)
+      - PackageReference GMap.NET   (mapa interactivo con OpenStreetMap)
+
+    NINGUNA clase del nucleo (decodificadores, mensajes, filtros, trayectorias)
+    ha sido modificada.
+    ============================================================================
+  -->
+
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <StartupObject>ASTERIX_Decoder_p1.Gui.AppLauncher</StartupObject>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GMap.NET.Core" Version="2.1.7" />
+    <PackageReference Include="GMap.NET.WinForms" Version="2.1.7" />
+  </ItemGroup>
 
 </Project>
