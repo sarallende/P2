@@ -1,0 +1,62 @@
+## ==========================================
+## Visual Studio & .NET .gitignore
+## Proyecto: ASTERIX Decoder (C# / .NET)
+## ==========================================
+
+# Directorios de compilación y salida binaria
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]uild/
+artifacts/
+
+# Visual Studio (caché, estado y configuración de usuario)
+.vs/
+*.user
+*.userprefs
+*.suo
+*.userosscache
+*.sln.docstates
+*.dbmdl
+*.pidb
+*.booproj
+*.svclog
+
+# Visual Studio Code (opcional de usuario)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains (Rider / Resharper)
+.idea/
+*.DotSettings.user
+_ReSharper*/
+
+# Archivos de logs y diagnóstico
+*.log
+[Ll]og/
+[Ll]ogs/
+
+# Archivos temporales y de respaldo
+*.tmp
+*.temp
+*~
+*.bak
+
+# Archivos del sistema operativo
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
