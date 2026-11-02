@@ -59,6 +59,11 @@ namespace ASTERIX_Decoder_p1.Gui
             Dock = DockStyle.Fill;
             BackColor = Tema.Fondo;
 
+            // OpenStreetMap exige un User-Agent propio e identificable. El valor
+            // por defecto de GMap.NET esta bloqueado por su politica de uso y
+            // devuelve "403 Access blocked". Con un User-Agent propio se resuelve.
+            GMapProvider.UserAgent = "ASTERIX-Decoder-PGTA/1.0 (proyecto academico)";
+
             GMaps.Instance.Mode = AccessMode.ServerAndCache;
 
             _mapa = new GMapControl

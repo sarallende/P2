@@ -7,8 +7,9 @@ using System.Windows.Forms;
 namespace ASTERIX_Decoder_p1.Gui
 {
     /// <summary>
-    /// Panel de estadisticas (dashboard). Distingue claramente numero de mensajes,
-    /// numero de trayectorias y numero de aeronaves unicas. No inventa metricas.
+    /// Panel de estadisticas (dashboard). Tarjetas agrupadas por secciones, con
+    /// maquetacion por Dock (no posiciones absolutas) para que el texto no se
+    /// recorte con escalado DPI. Distingue mensajes, trayectorias y aeronaves.
     /// </summary>
     internal sealed class VistaEstadisticas : UserControl
     {
@@ -18,7 +19,7 @@ namespace ASTERIX_Decoder_p1.Gui
         {
             Dock = DockStyle.Fill;
             BackColor = Tema.Fondo;
-            Padding = new Padding(22, 18, 22, 18);
+            Padding = new Padding(26, 20, 26, 20);
             AutoScroll = true;
 
             var raiz = new FlowLayoutPanel
@@ -36,30 +37,28 @@ namespace ASTERIX_Decoder_p1.Gui
                 Font = Tema.FuenteTitulo,
                 ForeColor = Tema.Texto,
                 AutoSize = true,
-                Margin = new Padding(0, 0, 0, 12)
+                Margin = new Padding(0, 0, 0, 16)
             });
 
-            var tarjetas = new FlowLayoutPanel
-            {
-                AutoSize = true,
-                WrapContents = true,
-                FlowDirection = FlowDirection.LeftToRight,
-                BackColor = Tema.Fondo,
-                MaximumSize = new Size(1100, 0)
-            };
+            raiz.Controls.Add(Seccion("Mensajes decodificados"));
+            raiz.Controls.Add(FilaTarjetas(
+                Tarjeta("msg048", "Mensajes CAT048", Tema.Radar),
+                Tarjeta("msg021", "Mensajes CAT021", Tema.Adsb),
+                Tarjeta("filt048", "CAT048 tras filtros", Tema.Radar),
+                Tarjeta("filt021", "CAT021 tras filtros", Tema.Adsb)));
 
-            tarjetas.Controls.Add(Tarjeta("msg048", "Mensajes CAT048", Tema.Radar));
-            tarjetas.Controls.Add(Tarjeta("msg021", "Mensajes CAT021", Tema.Adsb));
-            tarjetas.Controls.Add(Tarjeta("filt048", "CAT048 filtrados", Tema.Radar));
-            tarjetas.Controls.Add(Tarjeta("filt021", "CAT021 filtrados", Tema.Adsb));
-            tarjetas.Controls.Add(Tarjeta("trayRadar", "Trayectorias Radar", Tema.Radar));
-            tarjetas.Controls.Add(Tarjeta("trayAdsb", "Trayectorias ADS-B", Tema.Adsb));
-            tarjetas.Controls.Add(Tarjeta("unicas", "Aeronaves unicas", Tema.AcentoCian));
-            tarjetas.Controls.Add(Tarjeta("visibles", "Visibles ahora", Tema.Seleccion));
-            tarjetas.Controls.Add(Tarjeta("intervalo", "Intervalo temporal", Tema.AcentoAzul, ancho: 300));
-            tarjetas.Controls.Add(Tarjeta("tdecod", "Tiempo de decodificacion", Tema.AcentoAzul));
+            raiz.Controls.Add(Seccion("Trayectorias y aeronaves"));
+            raiz.Controls.Add(FilaTarjetas(
+                Tarjeta("trayRadar", "Trayectorias Radar", Tema.Radar),
+                Tarjeta("trayAdsb", "Trayectorias ADS-B", Tema.Adsb),
+                Tarjeta("unicas", "Aeronaves unicas", Tema.AcentoCian),
+                Tarjeta("visibles", "Visibles ahora", Tema.Seleccion)));
 
-            raiz.Controls.Add(tarjetas);
+            raiz.Controls.Add(Seccion("Tiempo de los datos"));
+            raiz.Controls.Add(FilaTarjetas(
+                Tarjeta("intervalo", "Intervalo temporal", Tema.AcentoAzul, ancho: 360, tamValor: 15f),
+                Tarjeta("tdecod", "Tiempo de decodificacion", Tema.AcentoAzul)));
+
             Controls.Add(raiz);
         }
 
@@ -92,39 +91,79 @@ namespace ASTERIX_Decoder_p1.Gui
                 l.Text = n.ToString("N0");
         }
 
-        private Panel Tarjeta(string clave, string titulo, Color acento, int ancho = 210)
+        // ----- Construccion de UI -----
+
+        private static Label Seccion(string texto) => new Label
+        {
+            Text = texto.ToUpperInvariant(),
+            Font = Tema.FuenteFuerte,
+            ForeColor = Tema.AcentoCian,
+            AutoSize = true,
+            Margin = new Padding(2, 8, 0, 8)
+        };
+
+        private static FlowLayoutPanel FilaTarjetas(params Control[] tarjetas)
+        {
+            var fila = new FlowLayoutPanel
+            {
+                AutoSize = true,
+                WrapContents = true,
+                FlowDirection = FlowDirection.LeftToRight,
+                BackColor = Tema.Fondo,
+                MaximumSize = new Size(1220, 0),
+                Margin = new Padding(0, 0, 0, 10)
+            };
+            fila.Controls.AddRange(tarjetas);
+            return fila;
+        }
+
+        private Panel Tarjeta(string clave, string titulo, Color acento, int ancho = 236, float tamValor = 22f)
         {
             var panel = new Panel
             {
-                Size = new Size(ancho, 112),
+                Size = new Size(ancho, 100),
                 BackColor = Tema.Panel,
-                Margin = new Padding(0, 0, 14, 14),
-                Padding = new Padding(16, 12, 12, 12)
+                Margin = new Padding(0, 0, 14, 14)
             };
 
-            // Franja de color a la izquierda.
             var franja = new Panel { Dock = DockStyle.Left, Width = 4, BackColor = acento };
 
+            var inner = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Tema.Panel,
+                Padding = new Padding(18, 14, 14, 14)
+            };
+
+            // Valor (ocupa el resto, debajo del titulo). AutoEllipsis evita cortes feos.
             var valor = new Label
             {
                 Text = Formato.ND,
-                Font = Tema.FuenteNumero,
+                Dock = DockStyle.Fill,
+                Font = new Font("Segoe UI", tamValor, FontStyle.Bold),
                 ForeColor = Tema.Texto,
-                AutoSize = true,
-                Location = new Point(16, 18)
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoSize = false,
+                AutoEllipsis = true
             };
+
             var tit = new Label
             {
-                Text = titulo,
+                Text = titulo.ToUpperInvariant(),
+                Dock = DockStyle.Top,
+                Height = 20,
                 Font = Tema.FuentePequena,
                 ForeColor = Tema.TextoTenue,
-                AutoSize = true,
-                Location = new Point(16, 74)
+                TextAlign = ContentAlignment.MiddleLeft,
+                AutoSize = false,
+                AutoEllipsis = true
             };
 
             _valores[clave] = valor;
-            panel.Controls.Add(valor);
-            panel.Controls.Add(tit);
+
+            inner.Controls.Add(valor);   // primero el que ocupa el resto
+            inner.Controls.Add(tit);     // despues el de arriba
+            panel.Controls.Add(inner);
             panel.Controls.Add(franja);
             return panel;
         }
